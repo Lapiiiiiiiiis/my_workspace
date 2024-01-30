@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y \
     python3 \
     git \
-    svn \
+    subversion \
     curl \
     file \
     vim \
@@ -49,9 +49,17 @@ RUN echo -e 'set-option -g default-shell "/bin/fish"\nset-window-option -g mode-
 
 # Config fish
 RUN echo 'set -gx TERM xterm-256color' > ~/.config/fish/config.fish
-# Todo:
-# Config vim
+
 # Delete proxy
+ENV https_proxy=
+ENV http_proxy=
+ENV all_proxy=
+
+# Config vim
+COPY my_configs.vim /root/.vim_runtime/
+
+# Todo:
+
 
 
 
