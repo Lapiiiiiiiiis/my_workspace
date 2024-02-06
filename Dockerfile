@@ -9,8 +9,10 @@ RUN apt-get update && \
     apt-get install -y \
     python3 \
     git \
+    locales \
     subversion \
     curl \
+    tree \
     file \
     vim \
     cscope \
@@ -58,6 +60,8 @@ ENV all_proxy=
 # Config vim
 COPY my_configs.vim /root/.vim_runtime/
 
+# locale config
+RUN locale-gen en_US.UTF-8
 # Todo:
 
 
