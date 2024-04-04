@@ -1,7 +1,7 @@
 # my_workspace
 My workspace based on docker
 
-## build
+## Build
 ```
 sudo docker build --network host -t my_workspace:latest .
 ```
