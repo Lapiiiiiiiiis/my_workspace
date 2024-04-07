@@ -2,7 +2,7 @@
 FROM ubuntu:latest
 
 # Set the working directory
-WORKDIR /workspace
+WORKDIR /root
 
 # Install necessary tools
 RUN apt-get update && \
@@ -11,6 +11,7 @@ RUN apt-get update && \
     git \
     locales \
     subversion \
+    stow \
     curl \
     tree \
     file \
@@ -20,18 +21,25 @@ RUN apt-get update && \
     gettext-base \
     man-db \
     tmux \
-    silversearcher-ag \
     && rm -rf /var/lib/apt/lists/*
 
 # Other configuration or setup steps if needed
-# Install fish
-RUN curl -L -o fish_3.7.0-1~jammy_amd64.deb https://launchpad.net/~fish-shell/+archive/ubuntu/release-3/+files/fish_3.7.0-1~jammy_amd64.deb
-RUN dpkg -i fish_3.7.0-1~jammy_amd64.deb
+
+# locale config
+RUN locale-gen en_US.UTF-8
 
 # Setting proxy
 ENV https_proxy=http://192.168.0.102:7890
 ENV http_proxy=http://192.168.0.102:7890
 ENV all_proxy=socks5://192.168.0.102:7890
+
+# Install fish
+RUN curl -L -o fish_3.7.1-1~jammy_amd64.deb https://launchpad.net/~fish-shell/+archive/ubuntu/release-3/+files/fish_3.7.1-1~jammy_amd64.deb
+RUN dpkg -i fish_3.7.1-1~jammy_amd64.deb
+# Install rg
+RUN curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb
+RUN dpkg -i ripgrep_14.1.0-1_amd64.deb
+
 # Install fish plugins
 RUN git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
     ~/.fzf/install
@@ -46,22 +54,21 @@ RUN curl -L https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions
 # Install good vimrc by github
 RUN git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime && /bin/sh ~/.vim_runtime/install_awesome_vimrc.sh
 
-# Config tmux
-RUN echo -e 'set-option -g default-shell "/bin/fish"\nset-window-option -g mode-keys vi' > ~/.tmux.conf
+# Install rg
+RUN curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.41.0_Linux_x86_64.tar.gz"
+RUN tar xf lazygit.tar.gz lazygit
+# Install lazygit
+RUN install lazygit /usr/local/bin
 
-# Config fish
-RUN echo 'set -gx TERM xterm-256color' > ~/.config/fish/config.fish
+# Using stow manage configure files
+RUN git clone https://github.com/Lapiiiiiiiiis/dotfiles.git
+RUN cd dotfiles && stow -R -t ~/ tmux vim fish
 
 # Delete proxy
 ENV https_proxy=
 ENV http_proxy=
 ENV all_proxy=
 
-# Config vim
-COPY my_configs.vim /root/.vim_runtime/
-
-# locale config
-RUN locale-gen en_US.UTF-8
 # Todo:
 
 
