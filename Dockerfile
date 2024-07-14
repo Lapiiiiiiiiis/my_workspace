@@ -21,6 +21,7 @@ RUN apt-get update && \
     gettext-base \
     man-db \
     tmux \
+    software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
 # Other configuration or setup steps if needed
